@@ -1,4 +1,5 @@
 :root{
+  /* These will be overridden per-theme from JS. Default to dark/cool. */
   --bg: #0b1020;
   --panel: rgba(255,255,255,0.06);
   --panel2: rgba(255,255,255,0.09);
@@ -6,9 +7,24 @@
   --muted: rgba(255,255,255,0.72);
   --faint: rgba(255,255,255,0.55);
   --border: rgba(255,255,255,0.12);
+  --control-bg: rgba(10,12,22,0.85);
+  --control-border: rgba(255,255,255,0.18);
+  --control-text: rgba(255,255,255,0.94);
+  --control-placeholder: rgba(255,255,255,0.55);
+  --control-inner-shadow: inset 0 1px 0 rgba(255,255,255,0.06), inset 0 -1px 0 rgba(0,0,0,0.30);
+  --control-h: 44px;
+  --control-r: 16px;
+  --control-px: 14px;
+  --control-py: 12px;
+  --control-fs: 13px;
   --shadow: 0 20px 60px rgba(0,0,0,0.55);
+  /* Theme variables (set by the app) */
   --accent: #b9ff6a;
   --accent2:#77a6ff;
+  --bg1: rgba(119,166,255,0.25);
+  --bg2: rgba(185,255,106,0.18);
+  --bg3: rgba(255,106,203,0.12);
+  --bg-top: #070a13;
   --danger:#ff6a6a;
   --radius: 16px;
   --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
@@ -17,52 +33,88 @@
 
 *{ box-sizing:border-box; }
 html, body{ height:100%; }
+
+/* Helps native controls (esp. <select>) match theme popovers. */
+:root[data-mode="dark"]{ color-scheme: dark; }
+:root[data-mode="light"]{ color-scheme: light; }
+
 body{
   margin:0;
   font-family: var(--sans);
   color: var(--text);
   background:
-    radial-gradient(900px 500px at 20% 10%, rgba(119,166,255,0.25), transparent 60%),
-    radial-gradient(900px 500px at 80% 20%, rgba(185,255,106,0.18), transparent 55%),
-    radial-gradient(900px 700px at 40% 85%, rgba(255,106,203,0.12), transparent 55%),
-    linear-gradient(180deg, #070a13, var(--bg));
+    radial-gradient(900px 500px at 20% 10%, color-mix(in srgb, var(--bg1) 70%, transparent), transparent 62%),
+    radial-gradient(900px 500px at 80% 20%, color-mix(in srgb, var(--bg2) 65%, transparent), transparent 58%),
+    radial-gradient(900px 700px at 40% 85%, color-mix(in srgb, var(--bg3) 60%, transparent), transparent 60%),
+    linear-gradient(180deg, var(--bg-top), var(--bg));
 }
+
+/* Calm the background so UI stays readable */
+:root{
+  --bg-dim: rgba(255,255,255,0.55);
+  --shell: color-mix(in srgb, var(--panel) 78%, transparent);
+  --shell-border: color-mix(in srgb, var(--border) 70%, transparent);
+  --shell-shadow: 0 30px 90px rgba(2,6,23,0.18);
+}
+
+body::before{
+  content:"";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(1200px 800px at 50% 20%, rgba(255,255,255,0.45), transparent 55%);
+  opacity: 0.55;
+}
+
+:root[data-mode="dark"] body::before{
+  opacity: 0.25;
+  background:
+    radial-gradient(1200px 800px at 40% 10%, rgba(255,0,110,0.18), transparent 55%),
+    radial-gradient(900px 700px at 70% 15%, rgba(58,134,255,0.16), transparent 55%);
+}
+
+:root[data-mode="dark"]{
+  --shell: color-mix(in srgb, var(--panel) 60%, transparent);
+  --shell-border: rgba(255,255,255,0.10);
+  --shell-shadow: 0 34px 120px rgba(0,0,0,0.55);
+}
+
 
 a{ color: inherit; text-decoration: none; }
 a:hover{ text-decoration: underline; }
 
 .container{
-  max-width: 1100px;
+  max-width: 1120px;
   margin: 0 auto;
-  padding: 28px 18px 64px;
+  padding: 32px 16px 72px;
 }
 
 .topbar{
   display:flex;
   align-items:flex-start;
   justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 18px;
+  gap: 16px;
+  margin-bottom: 20px;
 }
 
 .brand{
   display:flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
 .brand h1{
   margin:0;
-  font-size: 22px;
-  letter-spacing: 0.2px;
+  font-size: 26px;
+  letter-spacing: 0.3px;
 }
 
 .brand p{
   margin:0;
   color: var(--muted);
   font-size: 13px;
-  line-height: 1.35;
-  max-width: 68ch;
+  line-height: 1.5;
+  max-width: 70ch;
 }
 
 .pill{
@@ -72,8 +124,10 @@ a:hover{ text-decoration: underline; }
   padding: 8px 12px;
   border-radius: 999px;
   border: 1px solid var(--border);
-  background: rgba(255,255,255,0.05);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+  background: color-mix(in srgb, var(--panel2) 70%, transparent);
+  box-shadow:
+    0 2px 6px rgba(0,0,0,0.04),
+    0 8px 20px rgba(0,0,0,0.06);
   font-size: 12px;
   color: var(--muted);
 }
@@ -82,18 +136,48 @@ a:hover{ text-decoration: underline; }
 .panel{
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.04));
-  box-shadow: var(--shadow);
+  background: var(--panel);
+  box-shadow:
+    0 2px 6px rgba(0,0,0,0.03),
+    0 10px 26px rgba(2,6,23,0.06);
   overflow: hidden;
+  transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+
+.filtersPanel{
+  overflow: visible;
+  position: relative;
+  z-index: 12;
+  border-radius: var(--radius);
+}
+
+[data-theme="cool"] .panel{
+  background: color-mix(in srgb, var(--panel) 92%, transparent);
+  backdrop-filter: blur(10px);
+  box-shadow:
+    0 2px 8px rgba(0,0,0,0.20),
+    0 16px 40px rgba(0,0,0,0.28);
+}
+
+/* Theme-specific “concept” tuning */
+[data-theme="cool"] .tag.skill{
+  border-color: color-mix(in srgb, var(--accent) 44%, transparent);
+  box-shadow:
+    0 18px 40px color-mix(in srgb, var(--accent) 16%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--accent) 14%, transparent),
+    inset 0 1px 0 rgba(255,255,255,0.10),
+    inset 0 -1px 0 rgba(0,0,0,0.35);
 }
 
 .controls{
-  padding: 14px 14px 10px;
+  padding: 16px 18px 12px;
   border-bottom: 1px solid var(--border);
-  background: rgba(0,0,0,0.14);
+  background: var(--panel2);
   display:grid;
   grid-template-columns: 1.4fr 0.9fr 0.9fr 1.2fr;
   gap: 10px;
+  overflow: visible;
+  border-radius: inherit;
 }
 
 @media (max-width: 860px){
@@ -107,47 +191,302 @@ a:hover{ text-decoration: underline; }
   margin-bottom: 6px;
 }
 
-input[type="text"], select{
+.controls input[type="text"],
+.controls select,
+.topbar select{
   width: 100%;
-  padding: 10px 10px;
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.14);
-  background: rgba(10,12,22,0.75);
-  color: var(--text);
+  min-height: var(--control-h);
+  padding: var(--control-py) var(--control-px);
+  font-size: var(--control-fs);
+  border-radius: var(--control-r) !important; /* override any default/forms styling */
+  border: 1px solid var(--control-border);
+  background: var(--control-bg);
+  color: var(--control-text);
   outline: none;
+  transition: box-shadow 180ms ease, border-color 180ms ease, background 180ms ease, transform 180ms ease;
+  box-shadow: var(--control-inner-shadow);
+  -webkit-appearance: none;
+  appearance: none;
 }
-input[type="text"]::placeholder{ color: rgba(255,255,255,0.42); }
-input[type="text"]:focus, select:focus{
-  border-color: rgba(185,255,106,0.5);
-  box-shadow: 0 0 0 3px rgba(185,255,106,0.14);
+
+.controls input[type="text"]::placeholder{ color: var(--control-placeholder); }
+.controls input[type="text"]:focus,
+.controls select:focus,
+.topbar select:focus{
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 14%, transparent);
+}
+
+/* Consistent dropdown arrow (so Tailwind/forms can't force white selects). */
+.controls select,
+.topbar select{
+  padding-right: 40px;
+  background-image:
+    linear-gradient(45deg, transparent 50%, color-mix(in srgb, var(--control-text) 75%, transparent) 50%),
+    linear-gradient(135deg, color-mix(in srgb, var(--control-text) 75%, transparent) 50%, transparent 50%),
+    linear-gradient(to right, transparent, transparent);
+  background-position:
+    calc(100% - 18px) 50%,
+    calc(100% - 12px) 50%,
+    100% 0;
+  background-size: 6px 6px, 6px 6px, 2.5em 2.5em;
+  background-repeat: no-repeat;
+}
+
+/* Custom multi-select */
+.multiSelectField{
+  position: relative;
+  z-index: 1;
+}
+.multiSelectField.isOpen{
+  z-index: 30;
+}
+
+.multiSelectTrigger{
+  width: 100%;
+  min-height: var(--control-h);
+  padding: 7px 38px 7px 8px;
+  border-radius: var(--control-r);
+  border: 1px solid var(--control-border);
+  background: var(--control-bg);
+  color: var(--control-text);
+  box-shadow: var(--control-inner-shadow);
+  font-size: var(--control-fs);
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: box-shadow 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+.multiSelectTrigger:hover{
+  filter: brightness(1.01);
+}
+.multiSelectTrigger.isOpen,
+.multiSelectTrigger:focus{
+  outline: none;
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 14%, transparent);
+}
+
+.multiSelectPlaceholder{
+  color: var(--control-placeholder);
+}
+
+.multiSelectPills{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+.multiSelectPill{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.multiSelectPillRemove{
+  font-size: 12px;
+  line-height: 1;
+  opacity: 0.7;
+}
+.multiSelectPillRemove:hover{
+  opacity: 1;
+}
+
+.multiSelectChevron{
+  position: absolute;
+  right: 12px;
+  color: color-mix(in srgb, var(--control-text) 76%, transparent);
+}
+
+.multiSelectMenu{
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  color: #111827;
+  box-shadow:
+    0 2px 6px rgba(0,0,0,0.04),
+    0 8px 24px rgba(0,0,0,0.08);
+  padding: 8px 0; /* py-2 */
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-4px) scale(0.98);
+  transform-origin: top center;
+  pointer-events: none;
+  transition: opacity 170ms ease, transform 170ms ease, max-height 170ms ease;
+  z-index: 20;
+}
+.multiSelectMenu.isOpen{
+  max-height: 260px;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+  overflow: auto;
+}
+
+.multiSelectOption{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border: 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--border) 40%, transparent);
+  background: transparent;
+  color: #111827;
+  font-size: 11px;
+  font-family: var(--mono);
+  text-align: left;
+  cursor: pointer;
+  transition: background 150ms ease, transform 150ms ease;
+}
+.multiSelectOption:last-child{
+  border-bottom: 0;
+}
+.multiSelectOption:hover{
+  background: #f3f4f6;
+}
+.multiSelectOption.isSelected{
+  background: #eef2ff;
+}
+
+.multiSelectCheckbox{
+  width: 16px;
+  height: 16px;
+  border-radius: 5px;
+  border: 1px solid color-mix(in srgb, var(--accent) 36%, transparent);
+  background: color-mix(in srgb, var(--panel) 88%, transparent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: color-mix(in srgb, var(--accent) 80%, var(--text));
+  transition: background 150ms ease, border-color 150ms ease, transform 150ms ease;
+}
+.multiSelectOption.isSelected .multiSelectCheckbox{
+  background: color-mix(in srgb, var(--accent) 18%, var(--panel));
+  border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+  transform: scale(1.03);
+}
+
+:root[data-mode="dark"] .multiSelectMenu{
+  border-color: #374151;
+  background: #111827;
+  color: #f9fafb;
+  box-shadow:
+    0 2px 8px rgba(0,0,0,0.22),
+    0 14px 34px rgba(0,0,0,0.34);
+}
+:root[data-mode="dark"] .multiSelectOption{
+  color: #f9fafb;
+}
+:root[data-mode="dark"] .multiSelectOption:hover{
+  background: #1f2937;
+}
+:root[data-mode="dark"] .multiSelectOption.isSelected{
+  background: #1e3a5f;
+}
+
+/* Interactive star rating */
+.starRating{
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 3px;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.starRating .star{
+  border: 0;
+  background: transparent;
+  color: color-mix(in srgb, var(--faint) 95%, transparent);
+  width: 15px;
+  height: 15px;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transform-origin: center;
+  transition: transform 150ms ease, color 150ms ease, filter 150ms ease;
+}
+.starRating.compact .star{
+  width: 15px;
+  height: 15px;
+  font-size: 14px;
+}
+.starRating .star.isActive{
+  color: #f4b400;
+}
+.starRating .star:hover{
+  transform: scale(1.07);
+  filter: brightness(1.06);
+}
+
+/* Make sure option text isn't low-contrast when rendered by the UA. */
+select option{
+  color: var(--text);
+  background: var(--panel);
+}
+
+/* Dark mode: slightly glassy controls with clearer separation. */
+:root[data-mode="dark"] input[type="text"],
+:root[data-mode="dark"] select{
+  background: linear-gradient(180deg, color-mix(in srgb, var(--control-bg) 88%, transparent), color-mix(in srgb, var(--control-bg) 70%, transparent));
+  border-color: color-mix(in srgb, var(--control-border) 92%, transparent);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.06),
+    inset 0 -1px 0 rgba(0,0,0,0.35),
+    0 10px 24px rgba(0,0,0,0.22);
+}
+
+:root[data-mode="dark"] input[type="text"]::placeholder{
+  color: color-mix(in srgb, var(--control-text) 55%, transparent);
 }
 
 table{
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
 }
 thead th{
   text-align:left;
   font-size: 12px;
   font-weight: 650;
-  color: rgba(255,255,255,0.78);
-  padding: 12px 14px;
-  border-bottom: 1px solid var(--border);
+  color: var(--muted);
+  padding: 10px 18px;
+  border-bottom: 1px solid rgba(148,163,184,0.18);
 }
 tbody td{
-  padding: 12px 14px;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
+  padding: 14px 18px;
+  border-bottom: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
   vertical-align: top;
-  color: rgba(255,255,255,0.86);
+  color: var(--text);
   font-size: 13px;
   line-height: 1.35;
+  overflow: visible;
+  background: transparent;
 }
 
 tbody tr{
   cursor: pointer;
+  position: relative;
+  background: transparent;
+  transition: background-color 150ms ease;
 }
 tbody tr:hover{
-  background: rgba(255,255,255,0.045);
+  background: #f3f4f6;
+}
+
+:root[data-mode="dark"] tbody tr:hover{
+  background: rgba(255,255,255,0.06);
 }
 
 .tagrow{
@@ -159,19 +498,392 @@ tbody tr:hover{
 .tag{
   font-family: var(--mono);
   font-size: 11px;
-  padding: 4px 8px;
+  padding: 6px 12px; /* ~px-3 py-1 */
   border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.16);
-  background: rgba(255,255,255,0.06);
-  color: rgba(255,255,255,0.78);
+  border: 1px solid color-mix(in srgb, var(--tag-border, rgba(15,23,42,0.10)) 88%, transparent);
+  background: var(--tag-bg, rgba(255,255,255,0.7));
+  color: var(--tag-text, rgba(15,23,42,0.86));
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.70),
+    inset 0 -1px 0 rgba(2,6,23,0.06);
+  transition: transform 150ms ease, filter 150ms ease, box-shadow 150ms ease, background 150ms ease, border-color 150ms ease;
+  user-select: none;
 }
-.tag.accent{
-  border-color: rgba(185,255,106,0.35);
-  background: rgba(185,255,106,0.10);
+
+.tag:hover{
+  filter: brightness(1.03);
+  transform: scale(1.02);
+  box-shadow:
+    0 10px 26px rgba(2,6,23,0.08),
+    inset 0 1px 0 rgba(255,255,255,0.72),
+    inset 0 -1px 0 rgba(2,6,23,0.06);
 }
-.tag.blue{
-  border-color: rgba(119,166,255,0.40);
-  background: rgba(119,166,255,0.12);
+
+/* Tags inside table rows feel interactive */
+tbody tr .tag{
+  cursor: pointer;
+}
+
+/* Ensure open status dropdown sits above neighboring rows */
+tbody tr:has(.statusSelectField.isOpen){
+  z-index: 120;
+}
+
+/* Notion-like semantic palette (soft background + darker text) */
+.tag.difficulty.diff-easy{
+  --tag-bg: rgba(199, 249, 204, 0.75); /* light green */
+  --tag-text: rgba(20, 83, 45, 0.92);
+  --tag-border: rgba(34, 197, 94, 0.22);
+}
+.tag.difficulty.diff-easyplus{
+  --tag-bg: rgba(255, 243, 176, 0.78); /* light yellow */
+  --tag-text: rgba(133, 77, 14, 0.92); /* brown-ish */
+  --tag-border: rgba(234, 179, 8, 0.22);
+}
+.tag.difficulty.diff-medium{
+  --tag-bg: rgba(255, 183, 197, 0.72); /* light red/pink */
+  --tag-text: rgba(159, 18, 57, 0.90);
+  --tag-border: rgba(244, 63, 94, 0.22);
+}
+.tag.difficulty.diff-hard{
+  --tag-bg: rgba(231, 198, 255, 0.72); /* light purple */
+  --tag-text: rgba(88, 28, 135, 0.90);
+  --tag-border: rgba(168, 85, 247, 0.22);
+}
+.tag.difficulty.diff-other{
+  --tag-bg: rgba(226, 232, 240, 0.72);
+  --tag-text: rgba(51, 65, 85, 0.92);
+  --tag-border: rgba(148, 163, 184, 0.22);
+}
+
+/* Skills: each gets its own Notion-like color */
+.tag.skill.skill-control{
+  --tag-bg: rgba(189, 224, 254, 0.78); /* soft blue */
+  --tag-text: rgba(30, 64, 175, 0.90);
+  --tag-border: rgba(59, 130, 246, 0.22);
+}
+.tag.skill.skill-isolation{
+  --tag-bg: rgba(231, 198, 255, 0.78); /* soft purple */
+  --tag-text: rgba(88, 28, 135, 0.90);
+  --tag-border: rgba(168, 85, 247, 0.22);
+}
+.tag.skill.skill-musicality{
+  --tag-bg: rgba(236, 210, 255, 0.76); /* soft violet */
+  --tag-text: rgba(91, 33, 182, 0.90);
+  --tag-border: rgba(139, 92, 246, 0.22);
+}
+.tag.skill.skill-groove{
+  --tag-bg: rgba(153, 246, 228, 0.72); /* soft teal */
+  --tag-text: rgba(15, 118, 110, 0.92);
+  --tag-border: rgba(20, 184, 166, 0.22);
+}
+.tag.skill.skill-confidence{
+  --tag-bg: rgba(199, 249, 204, 0.74); /* soft green */
+  --tag-text: rgba(20, 83, 45, 0.92);
+  --tag-border: rgba(34, 197, 94, 0.22);
+}
+.tag.skill.skill-footwork{
+  --tag-bg: rgba(254, 202, 202, 0.72); /* soft red */
+  --tag-text: rgba(153, 27, 27, 0.92);
+  --tag-border: rgba(239, 68, 68, 0.22);
+}
+.tag.skill.skill-extension{
+  --tag-bg: rgba(255, 214, 201, 0.76); /* soft orange/peach */
+  --tag-text: rgba(154, 52, 18, 0.92);
+  --tag-border: rgba(249, 115, 22, 0.22);
+}
+.tag.skill.skill-stamina{
+  --tag-bg: rgba(255, 243, 176, 0.76); /* soft yellow */
+  --tag-text: rgba(133, 77, 14, 0.92);
+  --tag-border: rgba(234, 179, 8, 0.22);
+}
+.tag.skill.skill-other{
+  --tag-bg: rgba(226, 232, 240, 0.70);
+  --tag-text: rgba(51, 65, 85, 0.90);
+  --tag-border: rgba(148, 163, 184, 0.22);
+}
+
+/* Style tags: category colors (still soft + cohesive) */
+.tag.style.style-cute{
+  --tag-bg: rgba(255, 198, 211, 0.78); /* light pink */
+  --tag-text: rgba(157, 23, 77, 0.90); /* darker pink */
+  --tag-border: rgba(236, 72, 153, 0.20);
+}
+.tag.style.style-soft{
+  --tag-bg: rgba(237, 224, 255, 0.78); /* light lavender */
+  --tag-text: rgba(107, 33, 168, 0.90); /* darker purple */
+  --tag-border: rgba(168, 85, 247, 0.20);
+}
+.tag.style.style-elegant{
+  --tag-bg: rgba(253, 235, 208, 0.82); /* light beige/champagne */
+  --tag-text: rgba(120, 74, 27, 0.90); /* darker brown/gold */
+  --tag-border: rgba(217, 119, 6, 0.20);
+}
+.tag.style.style-girlcrush{
+  --tag-bg: rgba(255, 210, 243, 0.74); /* light magenta */
+  --tag-text: rgba(131, 24, 67, 0.92); /* darker magenta */
+  --tag-border: rgba(236, 72, 153, 0.20);
+}
+.tag.style.style-cool{
+  --tag-bg: rgba(219, 234, 254, 0.80); /* light blue-gray */
+  --tag-text: rgba(30, 64, 175, 0.88); /* darker blue */
+  --tag-border: rgba(96, 165, 250, 0.20);
+}
+.tag.style.style-powerful{
+  --tag-bg: rgba(254, 202, 202, 0.76); /* light red */
+  --tag-text: rgba(153, 27, 27, 0.92); /* darker red */
+  --tag-border: rgba(248, 113, 113, 0.22);
+}
+.tag.style.style-other{
+  --tag-bg: rgba(226, 232, 240, 0.70);
+  --tag-text: rgba(51, 65, 85, 0.90);
+  --tag-border: rgba(148, 163, 184, 0.20);
+}
+
+/* Status pills (progress tracker) */
+.tag.status{
+  border-radius: 999px;
+  border: 1px solid var(--tag-border);
+  background: var(--tag-bg);
+  color: var(--tag-text);
+  cursor: pointer;
+}
+.tag.status.status-not-started{
+  --tag-bg: rgba(226, 232, 240, 0.78); /* light gray */
+  --tag-text: rgba(71, 85, 105, 0.92); /* darker gray */
+  --tag-border: rgba(148, 163, 184, 0.24);
+}
+.tag.status.status-in-progress{
+  --tag-bg: rgba(219, 234, 254, 0.82); /* light blue */
+  --tag-text: rgba(29, 78, 216, 0.92); /* darker blue */
+  --tag-border: rgba(96, 165, 250, 0.24);
+}
+.tag.status.status-done{
+  --tag-bg: rgba(199, 249, 204, 0.80); /* light green */
+  --tag-text: rgba(22, 101, 52, 0.92); /* darker green */
+  --tag-border: rgba(74, 222, 128, 0.24);
+}
+
+/* Status dropdown (single-select) */
+.statusSelectField{
+  position: relative;
+  display: inline-block;
+  z-index: 1;
+}
+.statusSelectField.isOpen{
+  z-index: 140;
+}
+.statusSelectTrigger{
+  min-width: 112px;
+  justify-content: center;
+  gap: 6px;
+}
+.statusSelectChevron{
+  font-size: 10px;
+  line-height: 1;
+  opacity: 0.7;
+  margin-left: 2px;
+  transition: opacity 150ms ease, transform 150ms ease;
+}
+.statusSelectTrigger:hover .statusSelectChevron{
+  opacity: 0.95;
+}
+.statusSelectField.isOpen .statusSelectChevron{
+  transform: translateY(-1px);
+}
+.statusSelectMenu{
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  min-width: 170px;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  color: #111827;
+  box-shadow:
+    0 2px 6px rgba(0,0,0,0.04),
+    0 8px 24px rgba(0,0,0,0.08);
+  padding: 8px 0;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-4px) scale(0.98);
+  transform-origin: top left;
+  pointer-events: none;
+  transition: opacity 160ms ease, transform 160ms ease, max-height 160ms ease;
+  z-index: 200;
+}
+.statusSelectMenu.isOpen{
+  max-height: 220px;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+.statusSelectOption{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border: 0;
+  background: transparent;
+  color: #111827;
+  text-align: left;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 150ms ease, transform 150ms ease;
+}
+.statusSelectOption:hover{
+  background: #f3f4f6;
+}
+.statusSelectOption.isSelected{
+  background: #eef2ff;
+}
+.statusSelectCheck{
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1px solid color-mix(in srgb, var(--accent) 36%, transparent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: color-mix(in srgb, var(--accent) 80%, var(--text));
+}
+:root[data-mode="dark"] .statusSelectMenu{
+  border-color: #374151;
+  background: #111827;
+  color: #f9fafb;
+  box-shadow:
+    0 2px 8px rgba(0,0,0,0.22),
+    0 14px 34px rgba(0,0,0,0.34);
+}
+:root[data-mode="dark"] .statusSelectOption{
+  color: #f9fafb;
+}
+:root[data-mode="dark"] .statusSelectOption:hover{
+  background: #1f2937;
+}
+:root[data-mode="dark"] .statusSelectOption.isSelected{
+  background: #1e3a5f;
+}
+
+/* Rating filter (minimum stars) */
+.ratingFilterField{
+  position: relative;
+  z-index: 1;
+}
+.ratingFilterField.isOpen{
+  z-index: 40;
+}
+.ratingFilterTrigger{
+  width: 100%;
+  min-height: var(--control-h);
+  padding: var(--control-py) var(--control-px);
+  border-radius: var(--control-r);
+  border: 1px solid var(--control-border);
+  background: var(--control-bg);
+  color: var(--control-text);
+  box-shadow: var(--control-inner-shadow);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  cursor: pointer;
+}
+.ratingFilterTrigger:focus,
+.ratingFilterTrigger.isOpen{
+  outline: none;
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 14%, transparent);
+}
+.ratingFilterChevron{
+  font-size: 10px;
+  opacity: 0.8;
+}
+.ratingFilterMenu{
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  color: #111827;
+  box-shadow:
+    0 2px 6px rgba(0,0,0,0.04),
+    0 8px 24px rgba(0,0,0,0.08);
+  padding: 8px 0;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-4px) scale(0.98);
+  transform-origin: top center;
+  pointer-events: none;
+  transition: opacity 160ms ease, transform 160ms ease, max-height 160ms ease;
+  z-index: 30;
+}
+.ratingFilterMenu.isOpen{
+  max-height: 260px;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+.ratingFilterOption{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border: 0;
+  background: transparent;
+  color: #111827;
+  text-align: left;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 150ms ease, transform 150ms ease;
+}
+.ratingFilterOption:hover{
+  background: #f3f4f6;
+}
+.ratingFilterOption.isSelected{
+  background: #eef2ff;
+}
+.ratingFilterStars{
+  letter-spacing: 0.4px;
+  font-size: 12px;
+}
+:root[data-mode="dark"] .ratingFilterMenu{
+  border-color: #374151;
+  background: #111827;
+  color: #f9fafb;
+  box-shadow:
+    0 2px 8px rgba(0,0,0,0.22),
+    0 14px 34px rgba(0,0,0,0.34);
+}
+:root[data-mode="dark"] .ratingFilterOption{
+  color: #f9fafb;
+}
+:root[data-mode="dark"] .ratingFilterOption:hover{
+  background: #1f2937;
+}
+:root[data-mode="dark"] .ratingFilterOption.isSelected{
+  background: #1e3a5f;
+}
+
+/* Dark mode: keep pastels readable on dark by slightly increasing opacity and adding a soft glow */
+:root[data-mode="dark"] .tag{
+  box-shadow:
+    0 10px 26px rgba(0,0,0,0.35),
+    inset 0 1px 0 rgba(255,255,255,0.12),
+    inset 0 -1px 0 rgba(0,0,0,0.35);
+}
+:root[data-mode="dark"] .tag:hover{
+  box-shadow:
+    0 16px 40px rgba(0,0,0,0.45),
+    0 0 0 1px color-mix(in srgb, var(--tag-border) 80%, transparent),
+    inset 0 1px 0 rgba(255,255,255,0.12),
+    inset 0 -1px 0 rgba(0,0,0,0.35);
 }
 
 .muted{ color: var(--muted); }
@@ -182,7 +894,7 @@ tbody tr:hover{
   align-items:center;
   justify-content: space-between;
   gap: 10px;
-  color: rgba(255,255,255,0.68);
+  color: var(--muted);
   font-size: 12px;
 }
 
@@ -192,13 +904,39 @@ tbody tr:hover{
   justify-content:center;
   gap: 8px;
   padding: 10px 12px;
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.16);
-  background: rgba(255,255,255,0.06);
-  color: rgba(255,255,255,0.85);
+  border-radius: 999px;
+  border: 1px solid var(--control-border);
+  background: color-mix(in srgb, var(--control-bg) 85%, transparent);
+  color: var(--control-text);
   cursor:pointer;
+  transition: transform 160ms ease, background 160ms ease, box-shadow 160ms ease;
 }
-.btn:hover{ background: rgba(255,255,255,0.09); }
+.btn:hover{
+  background: color-mix(in srgb, var(--control-bg) 92%, transparent);
+  transform: translateY(-1px);
+}
+
+/* Utility ghost button for filter reset */
+.btn.btnGhostSm{
+  min-height: var(--control-h);
+  padding: var(--control-py) var(--control-px);
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: var(--control-r);
+  background: color-mix(in srgb, #ffffff 82%, var(--panel));
+  border-color: var(--control-border);
+  color: color-mix(in srgb, var(--control-text) 86%, transparent);
+  box-shadow: none;
+}
+.btn.btnGhostSm:hover{
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  color: var(--control-text);
+  transform: none;
+}
+
+:root[data-mode="dark"] .btn.btnGhostSm{
+  background: color-mix(in srgb, transparent 78%, var(--panel));
+}
 
 .detailHeader{
   display:flex;
@@ -232,16 +970,16 @@ tbody tr:hover{
 }
 
 .card{
-  border: 1px solid rgba(255,255,255,0.10);
-  border-radius: 14px;
-  background: rgba(0,0,0,0.18);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--panel);
   overflow:hidden;
 }
 .card .cardBody{ padding: 12px; }
 .card h3{
   margin:0 0 8px 0;
   font-size: 13px;
-  color: rgba(255,255,255,0.80);
+  color: var(--muted);
 }
 .kv{
   display:grid;
@@ -249,14 +987,14 @@ tbody tr:hover{
   gap: 8px 10px;
   font-size: 13px;
 }
-.kv .k{ color: rgba(255,255,255,0.62); }
-.kv .v{ color: rgba(255,255,255,0.88); }
+.kv .k{ color: var(--faint); }
+.kv .v{ color: var(--text); }
 
 .iframeWrap{
   position: relative;
   width: 100%;
   padding-top: 56.25%;
-  background: rgba(0,0,0,0.22);
+  background: color-mix(in srgb, var(--panel) 85%, transparent);
 }
 .iframeWrap iframe{
   position:absolute;
@@ -268,5 +1006,5 @@ tbody tr:hover{
 
 .empty{
   padding: 20px 14px;
-  color: rgba(255,255,255,0.70);
+  color: var(--muted);
 }

@@ -110,9 +110,20 @@ function slug(s) {
 
 function splitArtistSong(danceField) {
   const ds = String(danceField || "").trim();
-  const m = ds.match(/^(.*?)-\s*(.*)$/);
-  if (!m) return [ds, ""];
-  return [m[1].trim(), m[2].trim()];
+  // Prefer the explicit separator " - " so artist names with hyphens
+  // (e.g. "I-DLE") are preserved.
+  const explicitSep = ds.indexOf(" - ");
+  if (explicitSep !== -1) {
+    return [ds.slice(0, explicitSep).trim(), ds.slice(explicitSep + 3).trim()];
+  }
+
+  // Fallback for compact forms like "TWICE- What is Love?"
+  const compactSep = ds.indexOf("- ");
+  if (compactSep !== -1) {
+    return [ds.slice(0, compactSep).trim(), ds.slice(compactSep + 2).trim()];
+  }
+
+  return [ds, ""];
 }
 
 function splitSkills(skillsField) {
@@ -124,30 +135,45 @@ function splitSkills(skillsField) {
     .filter(Boolean);
 }
 
-function youtubeIdFromUrl(url) {
+function extractYoutubeInfo(url) {
   if (!url) return null;
   const u = String(url).trim();
+  let id = null;
+  let startSeconds = null;
+
   try {
     const parsed = new URL(u);
     const host = (parsed.hostname || "").toLowerCase();
     if (host === "youtu.be") {
       const idPath = parsed.pathname.replace(/^\/+/, "");
-      return idPath.split("/")[0] || null;
+      id = idPath.split("/")[0] || null;
     }
-    if (host.endsWith("youtube.com")) {
+    if (!id && host.endsWith("youtube.com")) {
       const v = parsed.searchParams.get("v");
-      if (v) return v;
+      if (v) id = v;
       // Handle /embed/<id>
       const parts = parsed.pathname.split("/").filter(Boolean);
       const embedIdx = parts.indexOf("embed");
-      if (embedIdx !== -1 && parts[embedIdx + 1]) return parts[embedIdx + 1];
+      if (!id && embedIdx !== -1 && parts[embedIdx + 1]) id = parts[embedIdx + 1];
+    }
+
+    // Parse t parameter, which might be like 71 or 71s
+    const tRaw = (parsed.searchParams && parsed.searchParams.get("t")) || null;
+    if (tRaw) {
+      const match = String(tRaw).match(/^(\d+)/);
+      if (match) startSeconds = Number(match[1]);
     }
   } catch (_) {
     // fall through
   }
-  // Fallback (best-effort)
-  const m = u.match(/v=([A-Za-z0-9_-]{6,})/);
-  return m ? m[1] : null;
+
+  // Fallback for ID (best-effort) if URL parsing failed
+  if (!id) {
+    const m = u.match(/v=([A-Za-z0-9_-]{6,})/);
+    if (m) id = m[1];
+  }
+
+  return { youtubeId: id, startSeconds };
 }
 
 function parseStarRating(starField) {
@@ -193,6 +219,8 @@ function parseDancesFromCsv(csvText) {
     const previewUrl = row[iPreview] || "";
     const tutorialUrl = row[iTutorial] || "";
 
+    const previewInfo = extractYoutubeInfo(previewUrl);
+
     out.push({
       id,
       artist,
@@ -201,7 +229,10 @@ function parseDancesFromCsv(csvText) {
       difficulty: (row[iDifficulty] || "").trim() || null,
       style: (row[iConcept] || "").trim(),
       skills: splitSkills(row[iSkills] || ""),
-      preview: { youtubeId: youtubeIdFromUrl(previewUrl) },
+      preview: {
+        youtubeId: previewInfo ? previewInfo.youtubeId : null,
+        startSeconds: previewInfo ? previewInfo.startSeconds : null,
+      },
       tutorialUrl: tutorialUrl,
       communityRating: parseStarRating(row[iFeel] || ""),
       // Stored for future “where to start” features.
