@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "https://esm.sh/react@18.3.1";
 import htm from "https://esm.sh/htm@3.1.1";
-import { DANCES, DIFFICULTIES, STYLES, SKILL_TAGS } from "../data/dances.js";
+import { DANCES } from "../data/dances_from_csv.js";
 import { getRoute, navigateTo } from "./router.js";
 
 const html = htm.bind(React.createElement);
@@ -28,6 +28,33 @@ function TablePage() {
   const groupOptions = useMemo(() => {
     const groups = uniq(DANCES.map((d) => d.group || d.artist));
     return groups.sort((a, b) => a.localeCompare(b));
+  }, []);
+
+  const difficultyOptions = useMemo(() => {
+    const order = ["Easy", "Easy+", "Medium", "Hard", "Hard+", "Advanced", "Very Hard", "Extreme"];
+    const values = uniq(DANCES.map((d) => d.difficulty).filter(Boolean));
+    return values.sort((a, b) => {
+      const ai = order.indexOf(a);
+      const bi = order.indexOf(b);
+      const aRank = ai === -1 ? 999 : ai;
+      const bRank = bi === -1 ? 999 : bi;
+      if (aRank !== bRank) return aRank - bRank;
+      return String(a).localeCompare(String(b));
+    });
+  }, []);
+
+  const styleOptions = useMemo(() => {
+    const values = uniq(DANCES.map((d) => d.style).filter(Boolean));
+    return values.sort((a, b) => String(a).localeCompare(String(b)));
+  }, []);
+
+  const skillOptions = useMemo(() => {
+    const skills = [];
+    DANCES.forEach((d) => {
+      if (Array.isArray(d.skills)) skills.push(...d.skills);
+    });
+    const values = uniq(skills.filter(Boolean));
+    return values.sort((a, b) => String(a).localeCompare(String(b)));
   }, []);
 
   const [q, setQ] = useState("");
@@ -65,7 +92,7 @@ function TablePage() {
           </p>
         </div>
         <div className="pill">
-          <span>Community-rated (placeholder)</span>
+          <span>Rated (from your export)</span>
           <b>${DANCES.length} dances</b>
         </div>
       </div>
@@ -77,7 +104,7 @@ function TablePage() {
             <input
               type="text"
               value=${q}
-              placeholder='Try "arm-heavy" or "TWICE"'
+              placeholder='Try "Control" or "TWICE"'
               onChange=${(e) => setQ(e.target.value)}
             />
           </div>
@@ -85,14 +112,14 @@ function TablePage() {
             <label>Difficulty</label>
             <select value=${difficulty} onChange=${(e) => setDifficulty(e.target.value)}>
               <option value="">Any</option>
-              ${DIFFICULTIES.map((d) => html`<option key=${d} value=${d}>${d}</option>`)}
+              ${difficultyOptions.map((d) => html`<option key=${d} value=${d}>${d}</option>`)}
             </select>
           </div>
           <div className="field">
             <label>Style / concept</label>
             <select value=${style} onChange=${(e) => setStyle(e.target.value)}>
               <option value="">Any</option>
-              ${STYLES.map((s) => html`<option key=${s} value=${s}>${s}</option>`)}
+              ${styleOptions.map((s) => html`<option key=${s} value=${s}>${s}</option>`)}
             </select>
           </div>
           <div className="field">
@@ -107,7 +134,7 @@ function TablePage() {
             <label>Skill focus</label>
             <select value=${skill} onChange=${(e) => setSkill(e.target.value)}>
               <option value="">Any</option>
-              ${SKILL_TAGS.map((t) => html`<option key=${t} value=${t}>${t}</option>`)}
+              ${skillOptions.map((t) => html`<option key=${t} value=${t}>${t}</option>`)}
             </select>
           </div>
         </div>
@@ -115,7 +142,7 @@ function TablePage() {
         ${filtered.length === 0
           ? html`<div className="empty">
               No matches. Try clearing filters or searching by a skill tag like
-              <span className="tag accent">fast footwork</span>.
+              <span className="tag accent">${skillOptions[0] || "Control"}</span>.
             </div>`
           : html`<table>
               <thead>
