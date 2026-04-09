@@ -1,0 +1,102 @@
+.statusSelectField{
+  position: relative;
+  display: inline-block;
+  z-index: 1;
+}
+.statusSelectField.isOpen{
+  z-index: 140;
+}
+.statusSelectTrigger{
+  min-width: 112px;
+  justify-content: center;
+  gap: 6px;
+}
+.statusSelectChevron{
+  font-size: 10px;
+  line-height: 1;
+  opacity: 0.7;
+  margin-left: 2px;
+  transition: opacity 150ms ease, transform 150ms ease;
+}
+.statusSelectTrigger:hover .statusSelectChevron{
+  opacity: 0.95;
+}
+.statusSelectField.isOpen .statusSelectChevron{
+  transform: translateY(-1px);
+}
+.statusSelectMenu{
+  position: absolute;
+  top: calc(100% + 3px);
+  left: 0;
+  min-width: 170px;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  color: #111827;
+  box-shadow:
+    0 1px 4px rgba(0,0,0,0.025),
+    0 6px 16px rgba(0,0,0,0.06);
+  padding: 8px 0;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-4px) scale(0.98);
+  transform-origin: top left;
+  pointer-events: none;
+  transition: opacity 160ms ease, transform 160ms ease, max-height 160ms ease;
+  z-index: 200;
+}
+.statusSelectMenu.isOpen{
+  max-height: 220px;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+.statusSelectOption{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border: 0;
+  background: transparent;
+  color: #111827;
+  text-align: left;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 150ms ease, transform 150ms ease;
+}
+.statusSelectOption:hover{
+  background: #f3f4f6;
+}
+.statusSelectOption.isSelected{
+  background: #eef2ff;
+}
+.statusSelectCheck{
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1px solid color-mix(in srgb, var(--accent) 36%, transparent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: color-mix(in srgb, var(--accent) 80%, var(--text));
+}
+:root[data-mode="dark"] .statusSelectMenu{
+  border-color: #374151;
+  background: #111827;
+  color: #f9fafb;
+  box-shadow:
+    0 1px 6px rgba(0,0,0,0.18),
+    0 10px 24px rgba(0,0,0,0.28);
+}
+:root[data-mode="dark"] .statusSelectOption{
+  color: #f9fafb;
+}
+:root[data-mode="dark"] .statusSelectOption:hover{
+  background: #1f2937;
+}
+:root[data-mode="dark"] .statusSelectOption.isSelected{
+  background: #1e3a5f;
+}

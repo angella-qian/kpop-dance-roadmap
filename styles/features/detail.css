@@ -1,0 +1,111 @@
+.detailHeader{
+  display:flex;
+  align-items:flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 14px 0 10px;
+}
+.detailTitle{
+  display:flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.detailTitle h2{
+  margin:0;
+  font-size: 20px;
+}
+.detailTitle .subtitle{
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.detailGrid{
+  display:grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 14px;
+  padding: 14px;
+}
+@media (max-width: 900px){
+  .detailGrid{ grid-template-columns: 1fr; }
+}
+
+.detailStack{
+  display: grid;
+  gap: 22px;
+  padding: 14px;
+}
+.detailTopGrid{
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 16px;
+  align-items: start;
+}
+.detailHeroCard{
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  padding: 0;
+}
+.detailHeroCard .iframeWrap{
+  border-radius: 18px;
+  overflow: hidden;
+}
+.detailHeroBody{
+  margin-top: 18px;
+}
+.detailMetaTags{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.detailsSecondary{
+  background: color-mix(in srgb, var(--panel) 98%, transparent);
+  border-color: color-mix(in srgb, var(--border) 62%, transparent);
+  box-shadow: none;
+}
+.detailsSecondary .cardBody{
+  padding: 14px 16px;
+}
+.detailsSecondary h3{
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--faint);
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.detailsSecondary .kv{
+  font-size: 12px;
+  grid-template-columns: 100px 1fr;
+  row-gap: 10px;
+}
+.detailsSecondary .kv .k{
+  color: var(--faint);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.detailsSecondary .kv .v{
+  color: var(--muted);
+  line-height: 1.45;
+}
+@media (max-width: 1020px){
+  .detailTopGrid{
+    grid-template-columns: 1fr;
+  }
+}
+
+.iframeWrap{
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%;
+  background: color-mix(in srgb, var(--panel) 85%, transparent);
+}
+.iframeWrap iframe{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  border:0;
+}

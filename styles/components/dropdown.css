@@ -1,0 +1,6 @@
+.field label{
+  display:block;
+  font-size: 11px;
+  color: var(--faint);
+  margin-bottom: 6px;
+}

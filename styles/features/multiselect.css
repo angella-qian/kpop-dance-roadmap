@@ -1,0 +1,157 @@
+.multiSelectField{
+  position: relative;
+  z-index: 1;
+}
+.multiSelectField.isOpen{
+  z-index: 30;
+}
+
+.multiSelectTrigger{
+  width: 100%;
+  min-height: var(--control-h);
+  padding: 7px 38px 7px 8px;
+  border-radius: var(--control-r);
+  border: 1px solid var(--control-border);
+  background: var(--control-bg);
+  color: var(--control-text);
+  box-shadow: var(--control-inner-shadow);
+  font-size: var(--control-fs);
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: box-shadow 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+.multiSelectTrigger:hover{
+  filter: brightness(1.01);
+}
+.multiSelectTrigger.isOpen,
+.multiSelectTrigger:focus{
+  outline: none;
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 14%, transparent);
+}
+
+.multiSelectPlaceholder{
+  color: var(--control-placeholder);
+}
+
+.multiSelectPills{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+.multiSelectPill{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.multiSelectPillRemove{
+  font-size: 12px;
+  line-height: 1;
+  opacity: 0.7;
+}
+.multiSelectPillRemove:hover{
+  opacity: 1;
+}
+
+.multiSelectChevron{
+  position: absolute;
+  right: 12px;
+  color: color-mix(in srgb, var(--control-text) 76%, transparent);
+}
+
+.multiSelectMenu{
+  position: absolute;
+  top: calc(100% + 3px);
+  left: 0;
+  right: 0;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  color: #111827;
+  box-shadow:
+    0 1px 4px rgba(0,0,0,0.025),
+    0 6px 16px rgba(0,0,0,0.06);
+  padding: 8px 0;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-4px) scale(0.98);
+  transform-origin: top center;
+  pointer-events: none;
+  transition: opacity 170ms ease, transform 170ms ease, max-height 170ms ease;
+  z-index: 20;
+}
+.multiSelectMenu.isOpen{
+  max-height: 260px;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+  overflow: auto;
+}
+
+.multiSelectOption{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border: 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--border) 40%, transparent);
+  background: transparent;
+  color: #111827;
+  font-size: 11px;
+  font-family: var(--mono);
+  text-align: left;
+  cursor: pointer;
+  transition: background 150ms ease, transform 150ms ease;
+}
+.multiSelectOption:last-child{
+  border-bottom: 0;
+}
+.multiSelectOption:hover{
+  background: #f3f4f6;
+}
+.multiSelectOption.isSelected{
+  background: #eef2ff;
+}
+
+.multiSelectCheckbox{
+  width: 16px;
+  height: 16px;
+  border-radius: 5px;
+  border: 1px solid color-mix(in srgb, var(--accent) 36%, transparent);
+  background: color-mix(in srgb, var(--panel) 88%, transparent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: color-mix(in srgb, var(--accent) 80%, var(--text));
+  transition: background 150ms ease, border-color 150ms ease, transform 150ms ease;
+}
+.multiSelectOption.isSelected .multiSelectCheckbox{
+  background: color-mix(in srgb, var(--accent) 18%, var(--panel));
+  border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+  transform: scale(1.03);
+}
+
+:root[data-mode="dark"] .multiSelectMenu{
+  border-color: #374151;
+  background: #111827;
+  color: #f9fafb;
+  box-shadow:
+    0 1px 6px rgba(0,0,0,0.18),
+    0 10px 24px rgba(0,0,0,0.28);
+}
+:root[data-mode="dark"] .multiSelectOption{
+  color: #f9fafb;
+}
+:root[data-mode="dark"] .multiSelectOption:hover{
+  background: #1f2937;
+}
+:root[data-mode="dark"] .multiSelectOption.isSelected{
+  background: #1e3a5f;
+}

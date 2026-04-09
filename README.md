@@ -1,8 +1,21 @@
-# Kpop Dance Finder (starter)
+# Kpop Dance Finder 💃
 
-A tiny React prototype for a searchable dance library:
-- Filter by **difficulty**, **style/concept**, **group**, and **skill focus**
-- Click a row to open a detail page with a **YouTube preview embed** and a **tutorial link**
+A web app to help you find beginner-friendly kpop dances based on difficulty, style, and skills.
+
+## Features
+- Filter by difficulty, style, group, and skill focus
+- Track progress (not started / in progress / done)
+- Rate dances
+- Clean UI with multiple themes
+
+## Why I built this
+I kept getting asked: "where do I start with K-pop dances?"
+So I built this tool to make that easier.
+
+## Tech
+- React
+- Local storage for state
+- Custom UI system
 
 ## Run it (no Node required)
 

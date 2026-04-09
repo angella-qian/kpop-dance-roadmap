@@ -1,0 +1,70 @@
+.controls{
+  padding: 16px 18px 12px;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel2);
+  display:grid;
+  grid-template-columns: 1.4fr 0.9fr 0.9fr 1.2fr;
+  gap: 10px;
+  overflow: visible;
+  border-radius: inherit;
+}
+
+@media (max-width: 860px){
+  .controls{ grid-template-columns: 1fr 1fr; }
+}
+
+.controls input[type="text"],
+.controls select,
+.topbar select{
+  width: 100%;
+  min-height: var(--control-h);
+  padding: var(--control-py) var(--control-px);
+  font-size: var(--control-fs);
+  border-radius: var(--control-r) !important;
+  border: 1px solid var(--control-border);
+  background: var(--control-bg);
+  color: var(--control-text);
+  outline: none;
+  transition: box-shadow 180ms ease, border-color 180ms ease, background 180ms ease, transform 180ms ease;
+  box-shadow: var(--control-inner-shadow);
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.controls input[type="text"]::placeholder{ color: var(--control-placeholder); }
+.controls input[type="text"]:focus,
+.controls select:focus,
+.topbar select:focus{
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 14%, transparent);
+}
+
+.controls select,
+.topbar select{
+  padding-right: 40px;
+  background-image:
+    linear-gradient(45deg, transparent 50%, color-mix(in srgb, var(--control-text) 75%, transparent) 50%),
+    linear-gradient(135deg, color-mix(in srgb, var(--control-text) 75%, transparent) 50%, transparent 50%),
+    linear-gradient(to right, transparent, transparent);
+  background-position:
+    calc(100% - 18px) 50%,
+    calc(100% - 12px) 50%,
+    100% 0;
+  background-size: 6px 6px, 6px 6px, 2.5em 2.5em;
+  background-repeat: no-repeat;
+}
+
+/* Dark mode: slightly glassy controls with clearer separation. */
+:root[data-mode="dark"] input[type="text"],
+:root[data-mode="dark"] select{
+  background: linear-gradient(180deg, color-mix(in srgb, var(--control-bg) 88%, transparent), color-mix(in srgb, var(--control-bg) 70%, transparent));
+  border-color: color-mix(in srgb, var(--control-border) 92%, transparent);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.06),
+    inset 0 -1px 0 rgba(0,0,0,0.35),
+    0 10px 24px rgba(0,0,0,0.22);
+}
+
+:root[data-mode="dark"] input[type="text"]::placeholder{
+  color: color-mix(in srgb, var(--control-text) 55%, transparent);
+}

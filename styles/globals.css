@@ -1,0 +1,91 @@
+:root{
+  /* These will be overridden per-theme from JS. Default to dark/cool. */
+  --bg: #0b1020;
+  --panel: rgba(255,255,255,0.06);
+  --panel2: rgba(255,255,255,0.09);
+  --text: rgba(255,255,255,0.92);
+  --muted: rgba(255,255,255,0.72);
+  --faint: rgba(255,255,255,0.55);
+  --border: rgba(255,255,255,0.12);
+  --control-bg: rgba(10,12,22,0.85);
+  --control-border: rgba(255,255,255,0.18);
+  --control-text: rgba(255,255,255,0.94);
+  --control-placeholder: rgba(255,255,255,0.55);
+  --control-inner-shadow: inset 0 1px 0 rgba(255,255,255,0.06), inset 0 -1px 0 rgba(0,0,0,0.30);
+  --control-h: 44px;
+  --control-r: 16px;
+  --control-px: 14px;
+  --control-py: 12px;
+  --control-fs: 13px;
+  --shadow: 0 20px 60px rgba(0,0,0,0.55);
+  /* Theme variables (set by the app) */
+  --accent: #b9ff6a;
+  --accent2:#77a6ff;
+  --bg1: rgba(119,166,255,0.25);
+  --bg2: rgba(185,255,106,0.18);
+  --bg3: rgba(255,106,203,0.12);
+  --bg-top: #070a13;
+  --danger:#ff6a6a;
+  --radius: 16px;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+/* Calm the background so UI stays readable */
+:root{
+  --bg-dim: rgba(255,255,255,0.55);
+  --shell: color-mix(in srgb, var(--panel) 78%, transparent);
+  --shell-border: color-mix(in srgb, var(--border) 70%, transparent);
+  --shell-shadow: 0 30px 90px rgba(2,6,23,0.18);
+}
+
+*{ box-sizing:border-box; }
+html, body{ height:100%; }
+
+/* Helps native controls (esp. <select>) match theme popovers. */
+:root[data-mode="dark"]{ color-scheme: dark; }
+:root[data-mode="light"]{ color-scheme: light; }
+
+body{
+  margin:0;
+  font-family: var(--sans);
+  color: var(--text);
+  background:
+    radial-gradient(900px 500px at 20% 10%, color-mix(in srgb, var(--bg1) 70%, transparent), transparent 62%),
+    radial-gradient(900px 500px at 80% 20%, color-mix(in srgb, var(--bg2) 65%, transparent), transparent 58%),
+    radial-gradient(900px 700px at 40% 85%, color-mix(in srgb, var(--bg3) 60%, transparent), transparent 60%),
+    linear-gradient(180deg, var(--bg-top), var(--bg));
+}
+
+body::before{
+  content:"";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(1200px 800px at 50% 20%, rgba(255,255,255,0.45), transparent 55%);
+  opacity: 0.55;
+}
+
+:root[data-mode="dark"] body::before{
+  opacity: 0.25;
+  background:
+    radial-gradient(1200px 800px at 40% 10%, rgba(255,0,110,0.18), transparent 55%),
+    radial-gradient(900px 700px at 70% 15%, rgba(58,134,255,0.16), transparent 55%);
+}
+
+:root[data-mode="dark"]{
+  --shell: color-mix(in srgb, var(--panel) 60%, transparent);
+  --shell-border: rgba(255,255,255,0.10);
+  --shell-shadow: 0 34px 120px rgba(0,0,0,0.55);
+}
+
+a{ color: inherit; text-decoration: none; }
+a:hover{ text-decoration: underline; }
+
+/* Make sure option text isn't low-contrast when rendered by the UA. */
+select option{
+  color: var(--text);
+  background: var(--panel);
+}
+
+.muted{ color: var(--muted); }

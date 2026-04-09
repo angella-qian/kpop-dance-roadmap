@@ -1,0 +1,103 @@
+.tagrow{
+  display:flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+.tag{
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--tag-border, rgba(15,23,42,0.10)) 88%, transparent);
+  background: var(--tag-bg, rgba(255,255,255,0.7));
+  color: var(--tag-text, rgba(15,23,42,0.86));
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.70),
+    inset 0 -1px 0 rgba(2,6,23,0.06);
+  transition: transform 150ms ease, filter 150ms ease, box-shadow 150ms ease, background 150ms ease, border-color 150ms ease;
+  user-select: none;
+}
+
+.tag.status:hover{
+  filter: brightness(1.03);
+  transform: scale(1.02);
+  box-shadow:
+    0 10px 26px rgba(2,6,23,0.08),
+    inset 0 1px 0 rgba(255,255,255,0.72),
+    inset 0 -1px 0 rgba(2,6,23,0.06);
+}
+
+/* Tags inside table rows feel interactive */
+tbody tr .tag{
+  cursor: pointer;
+}
+
+/* Non-clickable metadata tags: keep static appearance */
+.tag.difficulty,
+.tag.style,
+.tag.skill{
+  cursor: default;
+}
+
+/* Theme-specific “concept” tuning */
+[data-theme="cool"] .tag.skill{
+  border-color: color-mix(in srgb, var(--accent) 44%, transparent);
+  box-shadow:
+    0 18px 40px color-mix(in srgb, var(--accent) 16%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--accent) 14%, transparent),
+    inset 0 1px 0 rgba(255,255,255,0.10),
+    inset 0 -1px 0 rgba(0,0,0,0.35);
+}
+
+/* Notion-like semantic palette (soft background + darker text) */
+.tag.difficulty.diff-easy{ --tag-bg: rgba(199, 249, 204, 0.75); --tag-text: rgba(20, 83, 45, 0.92); --tag-border: rgba(34, 197, 94, 0.22); }
+.tag.difficulty.diff-easyplus{ --tag-bg: rgba(255, 243, 176, 0.78); --tag-text: rgba(133, 77, 14, 0.92); --tag-border: rgba(234, 179, 8, 0.22); }
+.tag.difficulty.diff-medium{ --tag-bg: rgba(255, 183, 197, 0.72); --tag-text: rgba(159, 18, 57, 0.90); --tag-border: rgba(244, 63, 94, 0.22); }
+.tag.difficulty.diff-hard{ --tag-bg: rgba(231, 198, 255, 0.72); --tag-text: rgba(88, 28, 135, 0.90); --tag-border: rgba(168, 85, 247, 0.22); }
+.tag.difficulty.diff-other{ --tag-bg: rgba(226, 232, 240, 0.72); --tag-text: rgba(51, 65, 85, 0.92); --tag-border: rgba(148, 163, 184, 0.22); }
+
+.tag.skill.skill-control{ --tag-bg: rgba(189, 224, 254, 0.78); --tag-text: rgba(30, 64, 175, 0.90); --tag-border: rgba(59, 130, 246, 0.22); }
+.tag.skill.skill-isolation{ --tag-bg: rgba(231, 198, 255, 0.78); --tag-text: rgba(88, 28, 135, 0.90); --tag-border: rgba(168, 85, 247, 0.22); }
+.tag.skill.skill-musicality{ --tag-bg: rgba(236, 210, 255, 0.76); --tag-text: rgba(91, 33, 182, 0.90); --tag-border: rgba(139, 92, 246, 0.22); }
+.tag.skill.skill-groove{ --tag-bg: rgba(153, 246, 228, 0.72); --tag-text: rgba(15, 118, 110, 0.92); --tag-border: rgba(20, 184, 166, 0.22); }
+.tag.skill.skill-confidence{ --tag-bg: rgba(199, 249, 204, 0.74); --tag-text: rgba(20, 83, 45, 0.92); --tag-border: rgba(34, 197, 94, 0.22); }
+.tag.skill.skill-footwork{ --tag-bg: rgba(254, 202, 202, 0.72); --tag-text: rgba(153, 27, 27, 0.92); --tag-border: rgba(239, 68, 68, 0.22); }
+.tag.skill.skill-extension{ --tag-bg: rgba(255, 214, 201, 0.76); --tag-text: rgba(154, 52, 18, 0.92); --tag-border: rgba(249, 115, 22, 0.22); }
+.tag.skill.skill-stamina{ --tag-bg: rgba(255, 243, 176, 0.76); --tag-text: rgba(133, 77, 14, 0.92); --tag-border: rgba(234, 179, 8, 0.22); }
+.tag.skill.skill-other{ --tag-bg: rgba(226, 232, 240, 0.70); --tag-text: rgba(51, 65, 85, 0.90); --tag-border: rgba(148, 163, 184, 0.22); }
+
+.tag.style.style-cute{ --tag-bg: rgba(255, 198, 211, 0.78); --tag-text: rgba(157, 23, 77, 0.90); --tag-border: rgba(236, 72, 153, 0.20); }
+.tag.style.style-soft{ --tag-bg: rgba(237, 224, 255, 0.78); --tag-text: rgba(107, 33, 168, 0.90); --tag-border: rgba(168, 85, 247, 0.20); }
+.tag.style.style-elegant{ --tag-bg: rgba(253, 235, 208, 0.82); --tag-text: rgba(120, 74, 27, 0.90); --tag-border: rgba(217, 119, 6, 0.20); }
+.tag.style.style-girlcrush{ --tag-bg: rgba(255, 210, 243, 0.74); --tag-text: rgba(131, 24, 67, 0.92); --tag-border: rgba(236, 72, 153, 0.20); }
+.tag.style.style-cool{ --tag-bg: rgba(219, 234, 254, 0.80); --tag-text: rgba(30, 64, 175, 0.88); --tag-border: rgba(96, 165, 250, 0.20); }
+.tag.style.style-powerful{ --tag-bg: rgba(254, 202, 202, 0.76); --tag-text: rgba(153, 27, 27, 0.92); --tag-border: rgba(248, 113, 113, 0.22); }
+.tag.style.style-other{ --tag-bg: rgba(226, 232, 240, 0.70); --tag-text: rgba(51, 65, 85, 0.90); --tag-border: rgba(148, 163, 184, 0.20); }
+
+/* Status pills (progress tracker) */
+.tag.status{
+  border-radius: 999px;
+  border: 1px solid var(--tag-border);
+  background: var(--tag-bg);
+  color: var(--tag-text);
+  cursor: pointer;
+}
+.tag.status.status-not-started{ --tag-bg: rgba(226, 232, 240, 0.78); --tag-text: rgba(71, 85, 105, 0.92); --tag-border: rgba(148, 163, 184, 0.24); }
+.tag.status.status-in-progress{ --tag-bg: rgba(219, 234, 254, 0.82); --tag-text: rgba(29, 78, 216, 0.92); --tag-border: rgba(96, 165, 250, 0.24); }
+.tag.status.status-done{ --tag-bg: rgba(199, 249, 204, 0.80); --tag-text: rgba(22, 101, 52, 0.92); --tag-border: rgba(74, 222, 128, 0.24); }
+
+/* Dark mode: keep pastels readable on dark by slightly increasing opacity and adding a soft glow */
+:root[data-mode="dark"] .tag{
+  box-shadow:
+    0 10px 26px rgba(0,0,0,0.35),
+    inset 0 1px 0 rgba(255,255,255,0.12),
+    inset 0 -1px 0 rgba(0,0,0,0.35);
+}
+:root[data-mode="dark"] .tag:hover{
+  box-shadow:
+    0 16px 40px rgba(0,0,0,0.45),
+    0 0 0 1px color-mix(in srgb, var(--tag-border) 80%, transparent),
+    inset 0 1px 0 rgba(255,255,255,0.12),
+    inset 0 -1px 0 rgba(0,0,0,0.35);
+}

@@ -1,0 +1,51 @@
+.btn{
+  --btn-bg: color-mix(in srgb, var(--control-bg) 85%, transparent);
+  --btn-hover-bg: color-mix(in srgb, var(--accent) 10%, var(--control-bg));
+  --btn-text: var(--control-text);
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap: 8px;
+  min-height: var(--control-h);
+  padding: var(--control-py) var(--control-px);
+  border-radius: var(--control-r);
+  border: 1px solid var(--control-border);
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  font-size: 12px;
+  font-weight: 600;
+  cursor:pointer;
+  transition: transform 160ms ease, background 160ms ease, box-shadow 160ms ease, color 160ms ease;
+}
+.btn:hover{
+  background: var(--btn-hover-bg);
+  transform: scale(1.02);
+  text-decoration: none;
+}
+
+.btn.btnPrimary{
+  padding: 12px 24px;
+  border-color: color-mix(in srgb, var(--control-border) 92%, transparent);
+  --btn-bg: color-mix(in srgb, var(--accent) 12%, var(--control-bg));
+  --btn-hover-bg: color-mix(in srgb, var(--accent) 18%, var(--control-bg));
+  --btn-text: color-mix(in srgb, var(--control-text) 92%, transparent);
+  box-shadow: none;
+}
+.ytIcon{
+  font-size: 13px;
+  line-height: 1;
+  opacity: 0.7;
+  color: color-mix(in srgb, var(--accent2) 68%, var(--control-text));
+}
+
+.btn.btnGhostSm{
+  --btn-bg: color-mix(in srgb, #ffffff 82%, var(--panel));
+  --btn-hover-bg: color-mix(in srgb, var(--accent) 10%, transparent);
+  --btn-text: color-mix(in srgb, var(--control-text) 86%, transparent);
+  border-color: var(--control-border);
+  box-shadow: none;
+}
+
+:root[data-mode="dark"] .btn.btnGhostSm{
+  --btn-bg: color-mix(in srgb, transparent 78%, var(--panel));
+}
