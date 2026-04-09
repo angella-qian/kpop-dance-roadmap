@@ -9,7 +9,7 @@ A web app to help you find beginner-friendly kpop dances based on difficulty, st
 - Clean UI with multiple themes
 
 ## Why I built this
-I kept getting asked: "where do I start with K-pop dances?"
+I kept getting asked: "where do I start with kpop dances?"
 So I built this tool to make that easier.
 
 ## Tech
@@ -33,5 +33,5 @@ Then open:
 ## Where to edit data
 
 Hardcoded dataset lives in:
-- `src/data/dances.js`
+- `src/data/dances_from_csv.js`
 
