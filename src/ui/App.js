@@ -178,6 +178,16 @@ function statusTagClass(status) {
   return "status-not-started";
 }
 
+const SORT_NONE = "none";
+const SORT_ASC = "asc";
+const SORT_DESC = "desc";
+
+function difficultyRank(value) {
+  const order = ["easy", "easy+", "medium", "hard", "hard+", "advanced", "very hard", "extreme"];
+  const idx = order.indexOf(String(value || "").toLowerCase());
+  return idx === -1 ? 999 : idx;
+}
+
 function StarRating({ value = 0, onChange, compact = false }) {
   const [hovered, setHovered] = useState(0);
   const active = hovered || value || 0;
@@ -443,6 +453,8 @@ function TablePage({ themeMode, setThemeMode, ratings, onRate, statuses, onSetSt
   const [skill, setSkill] = useState([]);
   const [statusFilter, setStatusFilter] = useState([]);
   const [minRating, setMinRating] = useState(0);
+  const [sortKey, setSortKey] = useState(null); // "artist" | "difficulty" | "rating" | null
+  const [sortDir, setSortDir] = useState(SORT_NONE);
 
   const clearFilters = () => {
     setQ("");
@@ -475,6 +487,48 @@ function TablePage({ themeMode, setThemeMode, ratings, onRate, statuses, onSetSt
       return true;
     });
   }, [q, difficulty, style, group, skill, statusFilter, statuses, ratings, minRating]);
+
+  const sortedRows = useMemo(() => {
+    if (!sortKey || sortDir === SORT_NONE) return filtered;
+    const rows = [...filtered];
+
+    rows.sort((a, b) => {
+      let cmp = 0;
+      if (sortKey === "artist") {
+        cmp = String(a.artist || "").localeCompare(String(b.artist || ""));
+      } else if (sortKey === "difficulty") {
+        cmp = difficultyRank(a.difficulty) - difficultyRank(b.difficulty);
+      } else if (sortKey === "rating") {
+        cmp = Number(ratings[a.id] || 0) - Number(ratings[b.id] || 0);
+      }
+      return sortDir === SORT_ASC ? cmp : -cmp;
+    });
+
+    return rows;
+  }, [filtered, sortKey, sortDir, ratings]);
+
+  const cycleSort = (key) => {
+    if (sortKey !== key) {
+      setSortKey(key);
+      setSortDir(SORT_ASC);
+      return;
+    }
+    if (sortDir === SORT_ASC) {
+      setSortDir(SORT_DESC);
+      return;
+    }
+    if (sortDir === SORT_DESC) {
+      setSortKey(null);
+      setSortDir(SORT_NONE);
+      return;
+    }
+    setSortDir(SORT_ASC);
+  };
+
+  const sortIcon = (key) => {
+    if (sortKey !== key || sortDir === SORT_NONE) return "↕";
+    return sortDir === SORT_ASC ? "▲" : "▼";
+  };
 
   return html`
     <div className="container space-y-6">
@@ -571,16 +625,31 @@ function TablePage({ themeMode, setThemeMode, ratings, onRate, statuses, onSetSt
           : html`<table>
               <thead>
                 <tr>
-                  <th style=${{ width: "32%" }}>Artist + song</th>
-                  <th style=${{ width: "12%" }}>Difficulty</th>
+                  <th style=${{ width: "32%" }}>
+                    <button className="sortHeaderBtn" onClick=${() => cycleSort("artist")}>
+                      <span>Artist + song</span>
+                      <span className="sortIcon">${sortIcon("artist")}</span>
+                    </button>
+                  </th>
+                  <th style=${{ width: "12%" }}>
+                    <button className="sortHeaderBtn" onClick=${() => cycleSort("difficulty")}>
+                      <span>Difficulty</span>
+                      <span className="sortIcon">${sortIcon("difficulty")}</span>
+                    </button>
+                  </th>
                   <th style=${{ width: "18%" }}>Style</th>
                   <th style=${{ width: "22%" }}>Skill focus</th>
                   <th style=${{ width: "12%" }}>Status</th>
-                  <th style=${{ width: "14%", textAlign: "left" }}>Rating</th>
+                  <th style=${{ width: "14%" }}>
+                    <button className="sortHeaderBtn" onClick=${() => cycleSort("rating")}>
+                      <span>Rating</span>
+                      <span className="sortIcon">${sortIcon("rating")}</span>
+                    </button>
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                ${filtered.map(
+                ${sortedRows.map(
                   (d) => {
                     const status = normalizeStatus(statuses[d.id]);
                     return html`<tr key=${d.id} onClick=${() => navigateTo(`/dance/${d.id}`)}>
@@ -676,7 +745,7 @@ function DetailPage({ id, themeMode, setThemeMode, ratings, onRate }) {
     <div className="container space-y-6">
       <div className="topbar">
         <div className="brand">
-          <h1>Kpop Dance Finder</h1>
+          <h1 className="text-3xl font-semibold tracking-tight">Kpop Dance Finder</h1>
           <p className="muted">Preview the dance and jump to a tutorial.</p>
         </div>
         <div style=${{ display: "flex", alignItems: "center", gap: "12px" }}>
@@ -693,79 +762,79 @@ function DetailPage({ id, themeMode, setThemeMode, ratings, onRate }) {
       </div>
 
       <div className="panel">
-        <div className="detailGrid">
-          <div className="card">
-            <div className="iframeWrap">
-              <iframe
-                src=${embedSrc}
-                title=${`${dance.artist} - ${dance.song} preview`}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen=${true}
-              ></iframe>
-            </div>
-            <div className="cardBody">
-              <div className="detailHeader">
-                <div className="detailTitle">
-                  <h2>${dance.artist} — ${dance.song}</h2>
-                  <div className="subtitle">
-                    ${splitStyleLabels(dance.style).map(
-                      (styleLabel) =>
-                        html`<span
-                          key=${styleLabel}
-                          className=${`tag style ${styleTagClass(styleLabel)}`}
-                        >
-                          ${styleLabel}
-                        </span>`
-                    )}
-                    <span className=${`tag difficulty ${difficultyTagClass(dance.difficulty)}`}>
-                      ${dance.difficulty}
-                    </span>
-                    <${StarRating}
-                      value=${Number(ratings[dance.id] || 0)}
-                      onChange=${(next) => onRate(dance.id, next)}
-                      compact=${true}
-                    />
+        <div className="detailStack">
+          <div className="detailTopGrid">
+            <div className="detailHeroCard">
+              <div className="iframeWrap">
+                <iframe
+                  src=${embedSrc}
+                  title=${`${dance.artist} - ${dance.song} preview`}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen=${true}
+                ></iframe>
+              </div>
+              <div className="detailHeroBody">
+                <div className="detailHeader">
+                  <div className="detailTitle">
+                    <h2>${dance.artist} — ${dance.song}</h2>
+                    <div className="subtitle detailMetaTags">
+                      ${splitStyleLabels(dance.style).map(
+                        (styleLabel) =>
+                          html`<span
+                            key=${styleLabel}
+                            className=${`tag style ${styleTagClass(styleLabel)}`}
+                          >
+                            ${styleLabel}
+                          </span>`
+                      )}
+                      <span className=${`tag difficulty ${difficultyTagClass(dance.difficulty)}`}>
+                        ${dance.difficulty}
+                      </span>
+                    </div>
                   </div>
+                  <a className="btn btnPrimary" href=${dance.tutorialUrl} target="_blank" rel="noreferrer">
+                    <span className="ytIcon">▶</span>
+                    <span>Open tutorial on YouTube</span>
+                  </a>
                 </div>
-                <a className="btn" href=${dance.tutorialUrl} target="_blank" rel="noreferrer">
-                  Open tutorial on YouTube
-                </a>
-              </div>
 
-              <div className="tagrow">
-                ${dance.skills.map(
-                  (s) => html`<span key=${s} className=${`tag skill ${skillTagClass(s)}`}>${s}</span>`
-                )}
+                <div className="tagrow detailMetaTags">
+                  ${dance.skills.map(
+                    (s) => html`<span key=${s} className=${`tag skill ${skillTagClass(s)}`}>${s}</span>`
+                  )}
+                </div>
+
+                <div style=${{ height: 10 }}></div>
+                <${StarRating}
+                  value=${Number(ratings[dance.id] || 0)}
+                  onChange=${(next) => onRate(dance.id, next)}
+                  compact=${false}
+                />
+              </div>
+            </div>
+
+            <div className="card detailsSecondary">
+              <div className="cardBody">
+                <h3>Details</h3>
+                <div className="kv">
+                  <div className="k">Artist</div>
+                  <div className="v">${dance.artist}</div>
+                  <div className="k">Song</div>
+                  <div className="v">${dance.song}</div>
+                  <div className="k">Group</div>
+                  <div className="v">${dance.group || dance.artist}</div>
+                  <div className="k">Difficulty</div>
+                  <div className="v">${dance.difficulty}</div>
+                  <div className="k">Style</div>
+                  <div className="v">${dance.style}</div>
+                  <div className="k">Skill focus</div>
+                  <div className="v">${dance.skills.join(", ")}</div>
+                </div>
               </div>
             </div>
           </div>
-
-          <div className="card">
-            <div className="cardBody">
-              <h3>Details</h3>
-              <div className="kv">
-                <div className="k">Artist</div>
-                <div className="v">${dance.artist}</div>
-                <div className="k">Song</div>
-                <div className="v">${dance.song}</div>
-                <div className="k">Group</div>
-                <div className="v">${dance.group || dance.artist}</div>
-                <div className="k">Difficulty</div>
-                <div className="v">${dance.difficulty}</div>
-                <div className="k">Style</div>
-                <div className="v">${dance.style}</div>
-                <div className="k">Skill focus</div>
-                <div className="v">${dance.skills.join(", ")}</div>
-              </div>
-              <div style=${{ height: 10 }}></div>
-              <div className="muted" style=${{ fontSize: 12, lineHeight: 1.4 }}>
-                Next steps: we can add community ratings, user-submitted entries, and a “where to
-                start” onboarding that recommends 3 dances based on your goals.
-              </div>
-            </div>
-          </div>
+        </div>
       </div>
-    </div>
     </div>
   `;
 }

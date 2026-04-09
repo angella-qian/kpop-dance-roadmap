@@ -149,6 +149,9 @@ a:hover{ text-decoration: underline; }
   position: relative;
   z-index: 12;
   border-radius: var(--radius);
+  box-shadow:
+    0 1px 4px rgba(0,0,0,0.025),
+    0 6px 14px rgba(0,0,0,0.045);
 }
 
 [data-theme="cool"] .panel{
@@ -301,7 +304,7 @@ a:hover{ text-decoration: underline; }
 
 .multiSelectMenu{
   position: absolute;
-  top: calc(100% + 8px);
+  top: calc(100% + 3px);
   left: 0;
   right: 0;
   border-radius: 16px;
@@ -309,8 +312,8 @@ a:hover{ text-decoration: underline; }
   background: #ffffff;
   color: #111827;
   box-shadow:
-    0 2px 6px rgba(0,0,0,0.04),
-    0 8px 24px rgba(0,0,0,0.08);
+    0 1px 4px rgba(0,0,0,0.025),
+    0 6px 16px rgba(0,0,0,0.06);
   padding: 8px 0; /* py-2 */
   max-height: 0;
   overflow: hidden;
@@ -379,8 +382,8 @@ a:hover{ text-decoration: underline; }
   background: #111827;
   color: #f9fafb;
   box-shadow:
-    0 2px 8px rgba(0,0,0,0.22),
-    0 14px 34px rgba(0,0,0,0.34);
+    0 1px 6px rgba(0,0,0,0.18),
+    0 10px 24px rgba(0,0,0,0.28);
 }
 :root[data-mode="dark"] .multiSelectOption{
   color: #f9fafb;
@@ -464,6 +467,27 @@ thead th{
   padding: 10px 18px;
   border-bottom: 1px solid rgba(148,163,184,0.18);
 }
+.sortHeaderBtn{
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: 650;
+  padding: 0;
+  cursor: pointer;
+}
+.sortHeaderBtn:hover{
+  color: var(--text);
+}
+.sortIcon{
+  font-size: 10px;
+  opacity: 0.75;
+}
 tbody td{
   padding: 14px 18px;
   border-bottom: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
@@ -510,7 +534,7 @@ tbody tr:hover{
   user-select: none;
 }
 
-.tag:hover{
+.tag.status:hover{
   filter: brightness(1.03);
   transform: scale(1.02);
   box-shadow:
@@ -522,6 +546,13 @@ tbody tr:hover{
 /* Tags inside table rows feel interactive */
 tbody tr .tag{
   cursor: pointer;
+}
+
+/* Non-clickable metadata tags: keep static appearance */
+.tag.difficulty,
+.tag.style,
+.tag.skill{
+  cursor: default;
 }
 
 /* Ensure open status dropdown sits above neighboring rows */
@@ -693,7 +724,7 @@ tbody tr:has(.statusSelectField.isOpen){
 }
 .statusSelectMenu{
   position: absolute;
-  top: calc(100% + 8px);
+  top: calc(100% + 3px);
   left: 0;
   min-width: 170px;
   border-radius: 16px;
@@ -701,8 +732,8 @@ tbody tr:has(.statusSelectField.isOpen){
   background: #ffffff;
   color: #111827;
   box-shadow:
-    0 2px 6px rgba(0,0,0,0.04),
-    0 8px 24px rgba(0,0,0,0.08);
+    0 1px 4px rgba(0,0,0,0.025),
+    0 6px 16px rgba(0,0,0,0.06);
   padding: 8px 0;
   max-height: 0;
   overflow: hidden;
@@ -755,8 +786,8 @@ tbody tr:has(.statusSelectField.isOpen){
   background: #111827;
   color: #f9fafb;
   box-shadow:
-    0 2px 8px rgba(0,0,0,0.22),
-    0 14px 34px rgba(0,0,0,0.34);
+    0 1px 6px rgba(0,0,0,0.18),
+    0 10px 24px rgba(0,0,0,0.28);
 }
 :root[data-mode="dark"] .statusSelectOption{
   color: #f9fafb;
@@ -803,7 +834,7 @@ tbody tr:has(.statusSelectField.isOpen){
 }
 .ratingFilterMenu{
   position: absolute;
-  top: calc(100% + 8px);
+  top: calc(100% + 3px);
   left: 0;
   right: 0;
   border-radius: 16px;
@@ -811,8 +842,8 @@ tbody tr:has(.statusSelectField.isOpen){
   background: #ffffff;
   color: #111827;
   box-shadow:
-    0 2px 6px rgba(0,0,0,0.04),
-    0 8px 24px rgba(0,0,0,0.08);
+    0 1px 4px rgba(0,0,0,0.025),
+    0 6px 16px rgba(0,0,0,0.06);
   padding: 8px 0;
   max-height: 0;
   overflow: hidden;
@@ -858,8 +889,8 @@ tbody tr:has(.statusSelectField.isOpen){
   background: #111827;
   color: #f9fafb;
   box-shadow:
-    0 2px 8px rgba(0,0,0,0.22),
-    0 14px 34px rgba(0,0,0,0.34);
+    0 1px 6px rgba(0,0,0,0.18),
+    0 10px 24px rgba(0,0,0,0.28);
 }
 :root[data-mode="dark"] .ratingFilterOption{
   color: #f9fafb;
@@ -899,43 +930,56 @@ tbody tr:has(.statusSelectField.isOpen){
 }
 
 .btn{
+  --btn-bg: color-mix(in srgb, var(--control-bg) 85%, transparent);
+  --btn-hover-bg: color-mix(in srgb, var(--accent) 10%, var(--control-bg));
+  --btn-text: var(--control-text);
   display:inline-flex;
   align-items:center;
   justify-content:center;
   gap: 8px;
-  padding: 10px 12px;
-  border-radius: 999px;
+  min-height: var(--control-h);
+  padding: var(--control-py) var(--control-px);
+  border-radius: var(--control-r);
   border: 1px solid var(--control-border);
-  background: color-mix(in srgb, var(--control-bg) 85%, transparent);
-  color: var(--control-text);
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  font-size: 12px;
+  font-weight: 600;
   cursor:pointer;
-  transition: transform 160ms ease, background 160ms ease, box-shadow 160ms ease;
+  transition: transform 160ms ease, background 160ms ease, box-shadow 160ms ease, color 160ms ease;
 }
 .btn:hover{
-  background: color-mix(in srgb, var(--control-bg) 92%, transparent);
-  transform: translateY(-1px);
+  background: var(--btn-hover-bg);
+  transform: scale(1.02);
+  text-decoration: none;
+}
+
+.btn.btnPrimary{
+  padding: 12px 24px;
+  border-color: color-mix(in srgb, var(--control-border) 92%, transparent);
+  --btn-bg: color-mix(in srgb, var(--accent) 12%, var(--control-bg));
+  --btn-hover-bg: color-mix(in srgb, var(--accent) 18%, var(--control-bg));
+  --btn-text: color-mix(in srgb, var(--control-text) 92%, transparent);
+  box-shadow: none;
+}
+.ytIcon{
+  font-size: 13px;
+  line-height: 1;
+  opacity: 0.7;
+  color: color-mix(in srgb, var(--accent2) 68%, var(--control-text));
 }
 
 /* Utility ghost button for filter reset */
 .btn.btnGhostSm{
-  min-height: var(--control-h);
-  padding: var(--control-py) var(--control-px);
-  font-size: 12px;
-  font-weight: 600;
-  border-radius: var(--control-r);
-  background: color-mix(in srgb, #ffffff 82%, var(--panel));
+  --btn-bg: color-mix(in srgb, #ffffff 82%, var(--panel));
+  --btn-hover-bg: color-mix(in srgb, var(--accent) 10%, transparent);
+  --btn-text: color-mix(in srgb, var(--control-text) 86%, transparent);
   border-color: var(--control-border);
-  color: color-mix(in srgb, var(--control-text) 86%, transparent);
   box-shadow: none;
-}
-.btn.btnGhostSm:hover{
-  background: color-mix(in srgb, var(--accent) 10%, transparent);
-  color: var(--control-text);
-  transform: none;
 }
 
 :root[data-mode="dark"] .btn.btnGhostSm{
-  background: color-mix(in srgb, transparent 78%, var(--panel));
+  --btn-bg: color-mix(in srgb, transparent 78%, var(--panel));
 }
 
 .detailHeader{
@@ -967,6 +1011,74 @@ tbody tr:has(.statusSelectField.isOpen){
 }
 @media (max-width: 900px){
   .detailGrid{ grid-template-columns: 1fr; }
+}
+
+/* Refined detail page hierarchy: hero -> primary -> secondary */
+.detailStack{
+  display: grid;
+  gap: 22px; /* stronger separation between top and lower content */
+  padding: 14px;
+}
+.detailTopGrid{
+  display: grid;
+  grid-template-columns: 1.6fr 1fr; /* ~60/40 top section */
+  gap: 16px;
+  align-items: start;
+}
+.detailHeroCard{
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  padding: 0;
+}
+.detailHeroCard .iframeWrap{
+  border-radius: 18px;
+  overflow: hidden;
+}
+.detailHeroBody{
+  margin-top: 18px; /* spacing below video */
+}
+.detailMetaTags{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.detailsSecondary{
+  background: color-mix(in srgb, var(--panel) 98%, transparent);
+  border-color: color-mix(in srgb, var(--border) 62%, transparent);
+  box-shadow: none;
+}
+.detailsSecondary .cardBody{
+  padding: 14px 16px;
+}
+.detailsSecondary h3{
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--faint);
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.detailsSecondary .kv{
+  font-size: 12px;
+  grid-template-columns: 100px 1fr;
+  row-gap: 10px;
+}
+.detailsSecondary .kv .k{
+  color: var(--faint);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.detailsSecondary .kv .v{
+  color: var(--muted);
+  line-height: 1.45;
+}
+@media (max-width: 1020px){
+  .detailTopGrid{
+    grid-template-columns: 1fr;
+  }
 }
 
 .card{
